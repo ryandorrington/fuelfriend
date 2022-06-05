@@ -1,18 +1,6 @@
 var axios = require("axios");
 const polylineDecode = require("./polylineDecode");
 
-const directionsResponseExample = async () => {
-	var config = {
-		method: "get",
-		url: "https://maps.googleapis.com/maps/api/directions/json?origin=72+wimbledon+drive+kingsley+WA&destination=26+walters+drive+osbornepark+WA&key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68",
-		headers: {},
-	};
-
-	response = await axios(config);
-
-	return polylineDecode(response.data.routes[0].overview_polyline.points);
-};
-
 // pushes the lat long data of the start, quarter way, half way, 3 quarter way and end of the route to the array
 const getFivePointsAlongRoute = (latLongDataOfRoute) => {
 	var points = [];
@@ -26,6 +14,7 @@ const getFivePointsAlongRoute = (latLongDataOfRoute) => {
 	return points;
 };
 
+// searches for stations within a radius of 2km of the given five points
 const findNearbyStations = async (fivePointsAlongRoute) => {
 	const urls = [];
 	const stations = [];
@@ -45,7 +34,11 @@ const findNearbyStations = async (fivePointsAlongRoute) => {
 		await axios(config)
 			.then(function (response) {
 				for (station of response.data.results) {
-					stations.push(station.geometry.location);
+					stations.push({
+						lat: station.geometry.location.lat,
+						lng: station.geometry.location.lng,
+						placeID: station.place_id,
+					});
 				}
 			})
 			.catch(function (error) {
@@ -59,17 +52,16 @@ function removeDuplicateStationsFromArray(array) {
 	let check = {};
 	let res = [];
 	for (let i = 0; i < array.length; i++) {
-		if (!check[array[i]["lat"]] && !check[array[i]["lng"]]) {
-			check[array[i]["lat"]] = true;
-			check[array[i]["lng"]] = true;
+		if (!check[array[i]["placeID"]]) {
+			check[array[i]["placeID"]] = true;
 			res.push(array[i]);
 		}
 	}
 	return res;
 }
 
-getListOfNearbyStations = async () => {
-	const latLongDataOfRoute = await directionsResponseExample();
+getListOfNearbyStations = async (routeWithoutFuelStop) => {
+	const latLongDataOfRoute = polylineDecode(routeWithoutFuelStop.data.routes[0].overview_polyline.points);
 	const fivePointsAlongRoute = getFivePointsAlongRoute(latLongDataOfRoute);
 	const stations = await findNearbyStations(fivePointsAlongRoute);
 
