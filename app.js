@@ -1,7 +1,10 @@
 const express = require("express");
 var axios = require("axios");
+var fs = require("fs");
 const getNearbyStations = require("./getNearbyStations");
 const getViableRoutes = require("./getViableRoutes");
+const getFuelPricesOfViableStations = require("./getFuelPricesOfViableStations");
+const { get } = require("http");
 
 const app = express();
 const port = 3000;
@@ -9,9 +12,9 @@ const port = 3000;
 const origin = "72+wimbledon+drive+kingsley+WA";
 const destination = "26+walters+drive+osbornepark+WA";
 
-
-
-
+const getFuelPriceData = () => {
+	return JSON.parse(fs.readFileSync("stations.json"));
+};
 
 const directionsResponseExample = async (origin, destination) => {
 	var config = {
@@ -25,15 +28,12 @@ const directionsResponseExample = async (origin, destination) => {
 	return response;
 };
 
-
-
-
 app.get("/", async (req, res) => {
 	const routeWithoutFuelStop = await directionsResponseExample(origin, destination);
 	const stations = await getNearbyStations(routeWithoutFuelStop);
 	const viableRoutes = await getViableRoutes(routeWithoutFuelStop, stations, origin, destination, 6 * 60);
-	console.log(viableRoutes);
-	res.send("hello world");
+	console.log(getFuelPricesOfViableStations(getFuelPriceData(), viableRoutes));
+	res.send("hello");
 });
 
 app.listen(port, () => {

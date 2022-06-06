@@ -12,7 +12,6 @@ const totalRouteTimeCalculator = (route) => {
 const calculateRoutesWithStations = async (stations, origin, destination) => {
 	urls = [];
 	routesWithStations = [];
-
 	for (station of stations) {
 		urls.push(
 			`https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&waypoints=place_id%3A${station.placeID}&key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68`
@@ -28,7 +27,9 @@ const calculateRoutesWithStations = async (stations, origin, destination) => {
 		await axios(config)
 			.then(function (response) {
 				routesWithStations.push({
-					station: station.placeID,
+					station: stations[urls.indexOf(url)].placeID,
+					lat: stations[urls.indexOf(url)].lat,
+					lng: stations[urls.indexOf(url)].lng,
 					distance: totalRouteTimeCalculator(response.data.routes[0]),
 				});
 			})
@@ -41,7 +42,6 @@ const calculateRoutesWithStations = async (stations, origin, destination) => {
 
 const calculateViableRoutes = (routeWithoutFuelStop, routesWithStations, maxLenghtOfAddedTime) => {
 	distanceOfRouteWithoutFuelStop = totalRouteTimeCalculator(routeWithoutFuelStop.data.routes[0]);
-	console.log("blah", distanceOfRouteWithoutFuelStop);
 	viableRoutes = [];
 	for (route of routesWithStations) {
 		if (route.distance <= distanceOfRouteWithoutFuelStop + maxLenghtOfAddedTime) {
@@ -53,7 +53,6 @@ const calculateViableRoutes = (routeWithoutFuelStop, routesWithStations, maxLeng
 
 getViableRoutes = async (routeWithoutFuelStop, stations, origin, destination, maxLenghtOfAddedTime) => {
 	const routesWithStations = await calculateRoutesWithStations(stations, origin, destination);
-	console.log(routesWithStations);
 	const viableRoutes = calculateViableRoutes(
 		routeWithoutFuelStop,
 		routesWithStations,
