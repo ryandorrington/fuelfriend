@@ -9,6 +9,10 @@ const port = 3000;
 const origin = "72+wimbledon+drive+kingsley+WA";
 const destination = "26+walters+drive+osbornepark+WA";
 
+
+
+
+
 const directionsResponseExample = async (origin, destination) => {
 	var config = {
 		method: "get",
@@ -20,6 +24,9 @@ const directionsResponseExample = async (origin, destination) => {
 
 	return response;
 };
+
+
+
 
 app.get("/", async (req, res) => {
 	const routeWithoutFuelStop = await directionsResponseExample(origin, destination);
