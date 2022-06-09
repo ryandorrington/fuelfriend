@@ -4,7 +4,7 @@ var fs = require("fs");
 const getNearbyStations = require("./getNearbyStations");
 const getViableRoutes = require("./getViableRoutes");
 const getFuelPricesOfViableStations = require("./getFuelPricesOfViableStations");
-const { get } = require("http");
+const getRecommendedStation = require("./getRecommendedStation");
 
 const app = express();
 const port = 3000;
@@ -32,7 +32,9 @@ app.get("/", async (req, res) => {
 	const routeWithoutFuelStop = await directionsResponseExample(origin, destination);
 	const stations = await getNearbyStations(routeWithoutFuelStop);
 	const viableRoutes = await getViableRoutes(routeWithoutFuelStop, stations, origin, destination, 6 * 60);
-	console.log(getFuelPricesOfViableStations(getFuelPriceData(), viableRoutes));
+	getFuelPricesOfViableStations(getFuelPriceData(), viableRoutes);
+	const recommendedStation = getRecommendedStation(viableRoutes);
+	console.log("the best route is: " + recommendedStation.userID);
 	res.send("hello");
 });
 
