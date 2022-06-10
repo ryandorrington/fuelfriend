@@ -9,10 +9,57 @@
 <body>
     <h1>Hello World</h1>
 
+    <input id="origin" placeholder="Enter a Place" type="text">
+    <input id="destination" placeholder="Enter a Place" type="text">
+    <h3 id="originDetails"></h3>
+    <h3 id="destinationDetails"></h3>
 
 
+
+  
+        
+    <script>
+        let originAutocomplete;
+        let destinationAutocomplete;
+    
+        function initAutocomplete() {
+	        originAutocomplete = new google.maps.places.Autocomplete(document.getElementById("origin"), {
+		        componentRestrictions: { country: "AU" },
+		        fields: ["geometry", "name"],
+	        });
+            destinationAutocomplete = new google.maps.places.Autocomplete(document.getElementById("destination"), {
+		        componentRestrictions: { country: "AU" },
+		        fields: ["geometry", "name"],
+	        });
+	        originAutocomplete.addListener("place_changed", onOriginChanged);
+            destinationAutocomplete.addListener("place_changed", onDestinationChanged);
+            
+        }
+
+        
+        function onOriginChanged() {
+	        let place = originAutocomplete.getPlace();
+	        if (!place.geometry) {
+		        // User did not select a prediction; reset the input field
+		        document.getElementById("origin").placeholder = "Enter a Place";
+	        } else {
+		        document.getElementById("originDetails").innerHTML = place.name;
+	        }
+        }  
+
+        function onDestinationChanged() {
+	        let place = destinationAutocomplete.getPlace();
+	        if (!place.geometry) {
+		        // User did not select a prediction; reset the input field
+		        document.getElementById("destination").placeholder = "Enter a Place";
+	        } else {
+		        document.getElementById("destinationDetails").innerHTML = place.name;
+	        }
+        }      
+    </script>
     <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68&libraries=places&callback=initMap">
-</script>
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68&libraries=places&callback=initAutocomplete">
+    </script>
+      
 </body>
 </html>
