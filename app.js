@@ -12,6 +12,7 @@ const app = express();
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: true }));
 const port = 3000;
 
 const origin = "72+wimbledon+drive+kingsley+WA";
@@ -37,7 +38,7 @@ const createRouteLink = (placeID) => {
 	return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=FuelStation&waypoint_place_ids=${placeID}`;
 };
 
-const getFuelRoute = async () => {
+const getFuelRoute = async (origin, destination) => {
 	const routeWithoutFuelStop = await directionsResponseExample(origin, destination);
 	const stations = await getNearbyStations(routeWithoutFuelStop);
 	const viableRoutes = await getViableRoutes(routeWithoutFuelStop, stations, origin, destination, 6 * 60);
@@ -49,6 +50,17 @@ const getFuelRoute = async () => {
 app.get("/", (req, res) => {
 	// getFuelRoute()
 	res.render("app");
+});
+
+app.post("/", async (req, res) => {
+	const { origin, destination, originPlaceID, destinationPlaceID } = req.body;
+
+	console.log(origin);
+	console.log(destination);
+	console.log(originPlaceID);
+	console.log(destinationPlaceID);
+	res.redirect("/");
+	return;
 });
 
 app.listen(port, () => {

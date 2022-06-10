@@ -1,17 +1,35 @@
-let autocomplete;
+let originAutocomplete;
+let destinationAutocomplete;
+
 function initAutocomplete() {
-	autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
+	originAutocomplete = new google.maps.places.Autocomplete(document.getElementById("origin"), {
 		componentRestrictions: { country: "AU" },
 		fields: ["geometry", "name"],
 	});
-	autocomplete.addListener("place_changed", onPlaceChanged);
+	destinationAutocomplete = new google.maps.places.Autocomplete(document.getElementById("destination"), {
+		componentRestrictions: { country: "AU" },
+		fields: ["geometry", "name"],
+	});
+	originAutocomplete.addListener("place_changed", onOriginChanged);
+	destinationAutocomplete.addListener("place_changed", onDestinationChanged);
 }
-function onPlaceChanged() {
-	let place = autocomplete.getPlace();
+
+function onOriginChanged() {
+	let place = originAutocomplete.getPlace();
 	if (!place.geometry) {
 		// User did not select a prediction; reset the input field
-		document.getElementById("autocomplete").placeholder = "Enter a Place";
+		document.getElementById("origin").placeholder = "Enter a Place";
 	} else {
-		document.getElementById("details").innerHTML = place.name;
+		document.getElementById("originDetails").innerHTML = place.name;
+	}
+}
+
+function onDestinationChanged() {
+	let place = destinationAutocomplete.getPlace();
+	if (!place.geometry) {
+		// User did not select a prediction; reset the input field
+		document.getElementById("destination").placeholder = "Enter a Place";
+	} else {
+		document.getElementById("destinationDetails").innerHTML = place.name;
 	}
 }

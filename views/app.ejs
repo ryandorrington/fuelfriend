@@ -5,61 +5,63 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    
+    
+    
 </head>
 <body>
     <h1>Hello World</h1>
 
-    <input id="origin" placeholder="Enter a Place" type="text">
-    <input id="destination" placeholder="Enter a Place" type="text">
-    <h3 id="originDetails"></h3>
-    <h3 id="destinationDetails"></h3>
+    
+    
+    <form action="/" method="POST">
+        <input id="origin" name="origin" placeholder="Enter a Place" type="text">
+        <input id="destination" name="destination" placeholder="Enter a Place" type="text">
+        <input type="text" id="originPlaceID" name="originPlaceID" hidden>
+        <input type="text" id="destinationPlaceID" name="destinationPlaceID" hidden>
+        <button>SUBMIT</button>
+    </form>
 
-
-
-  
-        
     <script>
         let originAutocomplete;
         let destinationAutocomplete;
-    
+
         function initAutocomplete() {
-	        originAutocomplete = new google.maps.places.Autocomplete(document.getElementById("origin"), {
-		        componentRestrictions: { country: "AU" },
-		        fields: ["geometry", "name"],
-	        });
+            originAutocomplete = new google.maps.places.Autocomplete(document.getElementById("origin"), {
+                componentRestrictions: { country: "AU" },
+                fields: ["place_id","geometry", "name"],
+            });
             destinationAutocomplete = new google.maps.places.Autocomplete(document.getElementById("destination"), {
-		        componentRestrictions: { country: "AU" },
-		        fields: ["geometry", "name"],
-	        });
-	        originAutocomplete.addListener("place_changed", onOriginChanged);
+                componentRestrictions: { country: "AU" },
+                fields: ["place_id","geometry", "name"],
+            });
+            originAutocomplete.addListener("place_changed", onOriginChanged);
             destinationAutocomplete.addListener("place_changed", onDestinationChanged);
-            
         }
 
-        
         function onOriginChanged() {
-	        let place = originAutocomplete.getPlace();
-	        if (!place.geometry) {
-		        // User did not select a prediction; reset the input field
-		        document.getElementById("origin").placeholder = "Enter a Place";
-	        } else {
-		        document.getElementById("originDetails").innerHTML = place.name;
-	        }
-        }  
+            let place = originAutocomplete.getPlace();
+            if (!place.geometry) {
+                // User did not select a prediction; reset the input field
+                document.getElementById("origin").placeholder = "Enter a Place";
+            } else {
+                document.getElementById("originPlaceID").value = place.place_id;
+            }
+        }
 
         function onDestinationChanged() {
-	        let place = destinationAutocomplete.getPlace();
-	        if (!place.geometry) {
-		        // User did not select a prediction; reset the input field
-		        document.getElementById("destination").placeholder = "Enter a Place";
-	        } else {
-		        document.getElementById("destinationDetails").innerHTML = place.name;
-	        }
-        }      
+            let place = destinationAutocomplete.getPlace();
+            if (!place.geometry) {
+                // User did not select a prediction; reset the input field
+                document.getElementById("destination").placeholder = "Enter a Place";
+            } else {
+                document.getElementById("destinationPlaceID").value = place.place_id;
+            }
+        }
     </script>
     <script async
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68&libraries=places&callback=initAutocomplete">
     </script>
-      
+   
 </body>
 </html>
