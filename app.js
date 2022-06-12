@@ -15,14 +15,11 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 const port = 3000;
 
-const origin = "72+wimbledon+drive+kingsley+WA";
-const destination = "99+shepperton+road+victoria+park";
-
 const getFuelPriceData = () => {
 	return JSON.parse(fs.readFileSync("stations.json"));
 };
 
-const directionsResponseExample = async (origin, destination) => {
+const directionsResponse = async (origin, destination) => {
 	var config = {
 		method: "get",
 		url: `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68`,
@@ -34,32 +31,34 @@ const directionsResponseExample = async (origin, destination) => {
 	return response;
 };
 
-const createRouteLink = (placeID) => {
-	return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=FuelStation&waypoint_place_ids=${placeID}`;
+const createRouteLink = (origin, destination, placeID) => {
+	return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=Fuel%20Station&waypoint_place_ids=${placeID}`;
 };
 
 const getFuelRoute = async (origin, destination) => {
-	const routeWithoutFuelStop = await directionsResponseExample(origin, destination);
+	const routeWithoutFuelStop = await directionsResponse(origin, destination);
 	const stations = await getNearbyStations(routeWithoutFuelStop);
 	const viableRoutes = await getViableRoutes(routeWithoutFuelStop, stations, origin, destination, 6 * 60);
 	getFuelPricesOfViableStations(getFuelPriceData(), viableRoutes);
 	const recommendedStation = getRecommendedStation(viableRoutes);
-	console.log("the best route is: " + createRouteLink(recommendedStation.station));
+	return createRouteLink(origin, destination, recommendedStation.station);
 };
 
 app.get("/", (req, res) => {
-	// getFuelRoute()
 	res.render("app");
 });
 
 app.post("/", async (req, res) => {
-	const { origin, destination, originPlaceID, destinationPlaceID } = req.body;
+	let { origin, destination } = req.body;
+	origin = origin.replace(/ /g, "+");
+	origin = origin.split(",").join("");
 
-	console.log(origin);
-	console.log(destination);
-	console.log(originPlaceID);
-	console.log(destinationPlaceID);
-	res.redirect("/");
+	destination = destination.replace(/ /g, "+");
+	destination = destination.split(",").join("");
+
+	const fuelRoute = await getFuelRoute(origin, destination);
+
+	res.send(fuelRoute);
 	return;
 });
 
