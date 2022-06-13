@@ -48,17 +48,26 @@ app.get("/", (req, res) => {
 	res.render("app");
 });
 
+app.get("/route", async (req, res) => {
+	let { origin, destination } = req.query;
+
+	let formattedOrigin = origin.replace(/ /g, "+");
+	formattedOrigin = formattedOrigin.split(",").join("");
+
+	let formattedDestination = destination.replace(/ /g, "+");
+	formattedDestination = formattedDestination.split(",").join("");
+
+	const fuelRoute = await getFuelRoute(formattedOrigin, formattedDestination);
+
+	res.render("route", { origin, destination, fuelRoute });
+});
+
 app.post("/", async (req, res) => {
 	let { origin, destination } = req.body;
-	origin = origin.replace(/ /g, "+");
-	origin = origin.split(",").join("");
 
-	destination = destination.replace(/ /g, "+");
-	destination = destination.split(",").join("");
+	res.redirect(`/route?origin=${origin}&destination=${destination}`);
 
-	const fuelRoute = await getFuelRoute(origin, destination);
-
-	res.send(fuelRoute);
+	// res.redirect("route", { origin, destination, fuelRoute });
 	return;
 });
 
