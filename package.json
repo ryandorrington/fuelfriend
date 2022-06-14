@@ -1,0 +1,19 @@
+{
+  "name": "fuelfriend",
+  "version": "1.0.0",
+  "description": "A website built to help you find the most efficient fuel station from point A to B.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryandorrington/fuelfriend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryandorrington/fuelfriend/issues"
+  },
+  "homepage": "https://github.com/ryandorrington/fuelfriend#readme"
+}
