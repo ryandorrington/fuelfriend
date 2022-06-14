@@ -48,8 +48,22 @@ app.get("/", (req, res) => {
 	res.render("app");
 });
 
-app.get("/route", async (req, res) => {
-	let { origin, destination } = req.query;
+// app.get("/route", async (req, res) => {
+// 	let { origin, destination } = req.query;
+
+// 	let formattedOrigin = origin.replace(/ /g, "+");
+// 	formattedOrigin = formattedOrigin.split(",").join("");
+
+// 	let formattedDestination = destination.replace(/ /g, "+");
+// 	formattedDestination = formattedDestination.split(",").join("");
+
+// 	const fuelRoute = await getFuelRoute(formattedOrigin, formattedDestination);
+
+// 	res.render("route", { origin, destination, fuelRoute });
+// });
+
+app.post("/", async (req, res) => {
+	let { origin, destination } = req.body;
 
 	let formattedOrigin = origin.replace(/ /g, "+");
 	formattedOrigin = formattedOrigin.split(",").join("");
@@ -59,15 +73,9 @@ app.get("/route", async (req, res) => {
 
 	const fuelRoute = await getFuelRoute(formattedOrigin, formattedDestination);
 
-	res.render("route", { origin, destination, fuelRoute });
-});
+	res.redirect(fuelRoute);
+	// res.redirect(`/route?origin=${origin}&destination=${destination}`);
 
-app.post("/", async (req, res) => {
-	let { origin, destination } = req.body;
-
-	res.redirect(`/route?origin=${origin}&destination=${destination}`);
-
-	// res.redirect("route", { origin, destination, fuelRoute });
 	return;
 });
 
