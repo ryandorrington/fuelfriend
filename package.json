@@ -16,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/ryandorrington/fuelfriend/issues"
   },
-  "homepage": "https://github.com/ryandorrington/fuelfriend#readme"
+  "homepage": "https://github.com/ryandorrington/fuelfriend#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "ejs-mate": "^4.0.0",
+    "express": "^4.18.1",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7"
+  }
 }
