@@ -16,8 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 const port = process.env.PORT || 3000;
 
-const getFuelPriceData = () => {
-	return JSON.parse(fs.readFileSync("stations.json"));
+const getFuelPriceData = (fuelType) => {
+	return JSON.parse(fs.readFileSync(`${fuelType}Stations.json`));
 };
 
 const directionsResponse = async (origin, destination) => {
@@ -36,35 +36,22 @@ const createRouteLink = (origin, destination, placeID) => {
 	return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=Fuel%20Station&waypoint_place_ids=${placeID}`;
 };
 
-const getFuelRoute = async (origin, destination) => {
+const getFuelRoute = async (origin, destination, fuelType) => {
 	const routeWithoutFuelStop = await directionsResponse(origin, destination);
+
 	const stations = await getNearbyStations(routeWithoutFuelStop);
 	const viableRoutes = await getViableRoutes(routeWithoutFuelStop, stations, origin, destination, 6 * 60);
-	getFuelPricesOfViableStations(getFuelPriceData(), viableRoutes);
+	getFuelPricesOfViableStations(getFuelPriceData(fuelType), viableRoutes);
 	const recommendedStation = getRecommendedStation(viableRoutes);
 	return createRouteLink(origin, destination, recommendedStation.station);
 };
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
 	res.render("app");
 });
 
-// app.get("/route", async (req, res) => {
-// 	let { origin, destination } = req.query;
-
-// 	let formattedOrigin = origin.replace(/ /g, "+");
-// 	formattedOrigin = formattedOrigin.split(",").join("");
-
-// 	let formattedDestination = destination.replace(/ /g, "+");
-// 	formattedDestination = formattedDestination.split(",").join("");
-
-// 	const fuelRoute = await getFuelRoute(formattedOrigin, formattedDestination);
-
-// 	res.render("route", { origin, destination, fuelRoute });
-// });
-
 app.post("/", async (req, res) => {
-	let { origin, destination } = req.body;
+	let { origin, destination, fuelType } = req.body;
 
 	let formattedOrigin = origin.replace(/ /g, "+");
 	formattedOrigin = formattedOrigin.split(",").join("");
@@ -72,10 +59,9 @@ app.post("/", async (req, res) => {
 	let formattedDestination = destination.replace(/ /g, "+");
 	formattedDestination = formattedDestination.split(",").join("");
 
-	const fuelRoute = await getFuelRoute(formattedOrigin, formattedDestination);
+	const fuelRoute = await getFuelRoute(formattedOrigin, formattedDestination, fuelType);
 
 	res.redirect(fuelRoute);
-	// res.redirect(`/route?origin=${origin}&destination=${destination}`);
 
 	return;
 });

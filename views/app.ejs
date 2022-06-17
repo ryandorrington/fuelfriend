@@ -12,9 +12,22 @@
 <body class="text-center">
     <img src="/Fuel Friend.png" alt="Fuel Friend" width="250" height="250">
     <h5 class="text-info">Find The Best Fuel Station Along Your Route!</h5>
-    <div class="card text-center shadow p-3 mb-5 bg-body rounded mx-auto border border-primary" style="width: 23rem;">
-        <div class="card-body">
-            <form action="/" method="POST">
+
+    <form action="/" method="POST">
+        <div class="card text-center shadow p-3 mb-2 bg-body rounded mx-auto border border-primary" style="width: 23rem;">
+            <div class="card-body">
+                <label for="fuelType">Fuel Type</label>
+                <select class="form-select" name="fuelType" id="fuelType">
+                    <option value="unleaded">Unleaded</option>
+                    <option value="premium">Premium Unleaded</option>
+                    <option value="diesel">Diesel</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="card text-center shadow p-3 mb-5 bg-body rounded mx-auto border border-primary" style="width: 23rem;">
+            <div class="card-body">
                 <div class="mb-3">
                     <label for="origin" class="form-label">Origin</label>
                     <input id="origin" class="form-control" name="origin" placeholder="Enter a Place" type="text">
@@ -27,10 +40,15 @@
                 <button id="loadingButton" class="btn btn-primary" type="button" disabled hidden>
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Loading...
-                  </button>
-            </form>
+                </button>
+            </div>
         </div>
-    </div>
+    </form>
+
+
+
+
+
     <h5 class="text-secondary">Powered by FuelWatch</h5>
     <script>
         function toggleLoading() {
