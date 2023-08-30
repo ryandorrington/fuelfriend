@@ -9,12 +9,12 @@ const totalRouteTimeCalculator = (route) => {
 };
 
 // returns a list of the lengths of each route with the station set as a waypoint
-const calculateRoutesWithStations = async (stations, origin, destination) => {
+const calculateRoutesWithStations = async (stations, origin, destination, GOOGLE_MAPS_API_KEY) => {
 	urls = [];
 	routesWithStations = [];
 	for (station of stations) {
 		urls.push(
-			`https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&waypoints=place_id%3A${station.placeID}&key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68`
+			`https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&waypoints=place_id%3A${station.placeID}&key=${GOOGLE_MAPS_API_KEY}`
 		);
 	}
 	for (url of urls) {
@@ -51,8 +51,8 @@ const calculateViableRoutes = (routeWithoutFuelStop, routesWithStations, maxLeng
 	return viableRoutes;
 };
 
-getViableRoutes = async (routeWithoutFuelStop, stations, origin, destination, maxLenghtOfAddedTime) => {
-	const routesWithStations = await calculateRoutesWithStations(stations, origin, destination);
+getViableRoutes = async (routeWithoutFuelStop, stations, origin, destination, maxLenghtOfAddedTime, GOOGLE_MAPS_API_KEY) => {
+	const routesWithStations = await calculateRoutesWithStations(stations, origin, destination, GOOGLE_MAPS_API_KEY);
 	const viableRoutes = calculateViableRoutes(
 		routeWithoutFuelStop,
 		routesWithStations,

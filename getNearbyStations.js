@@ -15,13 +15,13 @@ const getFivePointsAlongRoute = (latLongDataOfRoute) => {
 };
 
 // searches for stations within a radius of 2km of the given five points
-const findNearbyStations = async (fivePointsAlongRoute) => {
+const findNearbyStations = async (fivePointsAlongRoute, GOOGLE_MAPS_API_KEY) => {
 	const urls = [];
 	const stations = [];
 
 	for (point of fivePointsAlongRoute) {
 		urls.push(
-			`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${point[0]}%2C${point[1]}&radius=2000&type=gas_station&key=AIzaSyDSy-SjECHR-IUZy39a7N3N0kYO-XzDv68`
+			`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${point[0]}%2C${point[1]}&radius=2000&type=gas_station&key=${GOOGLE_MAPS_API_KEY}`
 		);
 	}
 	for (url of urls) {
@@ -60,10 +60,10 @@ function removeDuplicateStationsFromArray(array) {
 	return res;
 }
 
-getListOfNearbyStations = async (routeWithoutFuelStop) => {
+getListOfNearbyStations = async (routeWithoutFuelStop, GOOGLE_MAPS_API_KEY) => {
 	const latLongDataOfRoute = polylineDecode(routeWithoutFuelStop.data.routes[0].overview_polyline.points);
 	const fivePointsAlongRoute = getFivePointsAlongRoute(latLongDataOfRoute);
-	const stations = await findNearbyStations(fivePointsAlongRoute);
+	const stations = await findNearbyStations(fivePointsAlongRoute, GOOGLE_MAPS_API_KEY);
 
 	return removeDuplicateStationsFromArray(stations);
 };
